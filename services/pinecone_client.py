@@ -14,8 +14,8 @@ if index_name not in pc.list_indexes().names():
         dimension=1536,      # depends on your embedding model
         metric='cosine',
         spec=ServerlessSpec(
-            cloud='aws',
-            region='us-west-2'
+            cloud='gcp',
+            region='us-central1'
         )
     )
 
