@@ -1,17 +1,23 @@
+# services/pinecone_client.py
 import os
-import pinecone
-from dotenv import load_dotenv
+from pinecone import Pinecone, ServerlessSpec
 
-load_dotenv()  # loads .env locally; Render uses env vars directly
+# Create Pinecone client instance
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")  # e.g., 'us-east-1-aws'
+index_name = "clipmind-index"
 
-pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENVIRONMENT)
+# Check if index exists; create if not
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
+        name=index_name,
+        dimension=1536,      # depends on your embedding model
+        metric='cosine',
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-west-2'
+        )
+    )
 
-# Create / connect index
-INDEX_NAME = "clipmind-index"
-if INDEX_NAME not in pinecone.list_indexes():
-    pinecone.create_index(INDEX_NAME, dimension=1536)
-
-index = pinecone.Index(INDEX_NAME)
+# Finally, get reference to the index
+index = pc.Index(index_name)
