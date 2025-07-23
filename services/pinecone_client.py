@@ -11,7 +11,7 @@ index_name = "clipmind-index"
 if index_name not in pc.list_indexes().names():
     pc.create_index(
         name=index_name,
-        dimension=1536,      # depends on your embedding model
+        dimension=1536,
         metric='cosine',
         spec=ServerlessSpec(
             cloud='gcp',
